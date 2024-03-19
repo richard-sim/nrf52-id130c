@@ -16,7 +16,25 @@ jobs:
       - uses: actions/checkout@v3
       - name: Fetch tools
         run: |
-          wget https://launchpad.net/gcc-arm-embedded/4.9/4.9-2015-q1-update/+download/gcc-arm-none-eabi-4_9-2015q1-20150306-linux.tar.bz2
-          tar zvjf gcc-arm-none-eabi-4_9-2015q1-20150306-linux.tar.bz2
+          wget --no-verbose https://launchpad.net/gcc-arm-embedded/4.9/4.9-2015-q1-update/+download/gcc-arm-none-eabi-4_9-2015q1-20150306-linux.tar.bz2
+          tar xjf gcc-arm-none-eabi-4_9-2015q1-20150306-linux.tar.bz2
           rm -f gcc-arm-none-eabi-4_9-2015q1-20150306-linux.tar.bz2
-          find .
+          wget --no-verbose https://developer.arm.com/-/media/Files/downloads/gnu-rm/10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2
+          tar xjf gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2
+          rm -f gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2
+      - name: Fetch SDKs
+        run: |
+          wget --no-verbose https://nsscprodmedia.blob.core.windows.net/prod/software-and-other-downloads/sdks/nrf5/binaries/nrf5_sdk_17.1.0_ddde560.zip
+          unzip -q nrf5_sdk_17.1.0_ddde560.zip
+          rm -f nrf5_sdk_17.1.0_ddde560.zip
+          wget --no-verbose https://nsscprodmedia.blob.core.windows.net/prod/software-and-other-downloads/sdks/nrf5/binaries/nrf5sdk110089a8197.zip
+          unzip -q nrf5sdk110089a8197.zip
+          rm -f nrf5sdk110089a8197.zip
+      - name: Install nrfutil
+        run: |
+          mkdir nrfutil
+          cd nrfutil
+          wget --no-verbose https://developer.nordicsemi.com/.pc-tools/nrfutil/x64-linux/nrfutil
+          chmod 755 nrfutil
+          ./nrfutil install nrf5sdk-tools
+          cd -
