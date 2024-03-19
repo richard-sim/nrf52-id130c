@@ -1,0 +1,22 @@
+name: Build and Publish
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+      - name: Fetch tools
+        run: |
+          wget https://launchpad.net/gcc-arm-embedded/4.9/4.9-2015-q1-update/+download/gcc-arm-none-eabi-4_9-2015q1-20150306-linux.tar.bz2
+          tar zvjf gcc-arm-none-eabi-4_9-2015q1-20150306-linux.tar.bz2
+          rm -f gcc-arm-none-eabi-4_9-2015q1-20150306-linux.tar.bz2
+          find .
