@@ -33,7 +33,9 @@ jobs:
           unzip -d nRF5_SDK_11.0.0_89a8197 -q nrf5sdk110089a8197.zip
           rm -f nrf5sdk110089a8197.zip
           cp -f Makefile.posix.17.1 nRF5_SDK_17.1.0_ddde560/components/toolchain/gcc/Makefile.posix
-      - name: Patch SDK with uECC
+          cp -f Makefile.posix.11.0 nRF5_SDK_11.0.0_89a8197/components/toolchain/gcc/Makefile.posix
+          cp -f sdk_config.h nRF5_SDK_17.1.0_ddde560/examples/dfu/secure_bootloader/pca10040_s132_ble/config/
+      - name: Patch SDK 17.1 with uECC
         run: |
           cd nRF5_SDK_17.1.0_ddde560/external/micro-ecc
           git clone https://github.com/kmackay/micro-ecc
@@ -53,22 +55,32 @@ jobs:
           cp -f dfu_public_key.c nRF5_SDK_17.1.0_ddde560/examples/dfu/dfu_public_key.c
           cd nRF5_SDK_17.1.0_ddde560/examples/dfu/secure_bootloader/pca10040_s132_ble/armgcc
           make SDK_ROOT=${GITHUB_WORKSPACE}/nRF5_SDK_17.1.0_ddde560 GITHUB_WORKSPACE=${GITHUB_WORKSPACE}
+          ${GITHUB_WORKSPACE}/nrfutil/nrfutil settings generate --family NRF52 --application _build/nrf52832_xxaa_s132.hex --application-version 1 --bootloader-version 1 --bl-settings-version 1 _build/bootloader_setting.hex
           cd ${GITHUB_WORKSPACE}
-      - name: Sign SDK 17.1 bootloader and extract sd_bl.bin to megadfu
+      - name: Sign SDK 17.1 bootloader and extract files to megadfu
         run: |
           nrfutil/nrfutil pkg generate --hw-version 52 --sd-req 0xB7 --sd-id 0xB7 --key-file dfu_private_key.pem --softdevice nRF5_SDK_17.1.0_ddde560/components/softdevice/s132/hex/s132_nrf52_7.2.0_softdevice.hex --bootloader-version 1 --bootloader nRF5_SDK_17.1.0_ddde560/examples/dfu/secure_bootloader/pca10040_s132_ble/armgcc/_build/nrf52832_xxaa_s132.hex sdk-17-dfu-package-bootloader.zip
           unzip -q sdk-17-dfu-package-bootloader.zip sd_bl.bin
-          mv sd_bl.bin mega-dfu/megadfu
-      - name: Build megadfu with SDK 11
+          mv sd_bl.bin mega-dfu/megadfu/
+          mv nRF5_SDK_17.1.0_ddde560/examples/dfu/secure_bootloader/pca10040_s132_ble/armgcc/_build/bootloader_setting.hex mega-dfu/megadfu/
+      - name: Build megadfu-finalize, megadfu and megadfu-bootstrap with SDK 11 and SDK17.1 bootloader as payload
         run: |
+          cd mega-dfu/megadfu-finalize
+          make NRF_SDK_PATH=${GITHUB_WORKSPACE}/nRF5_SDK_11.0.0_89a8197 GITHUB_WORKSPACE=${GITHUB_WORKSPACE}
+          cd ${GITHUB_WORKSPACE}
+          chmod 755 mega-dfu/megadfu/lz4
           cd mega-dfu/megadfu
-          make NRF_SDK_PATH=${GITHUB_WORKSPACE}/nRF5_SDK_11.0.0_89a8197
+          make NRF_SDK_PATH=${GITHUB_WORKSPACE}/nRF5_SDK_11.0.0_89a8197 GITHUB_WORKSPACE=${GITHUB_WORKSPACE}
+          cd ${GITHUB_WORKSPACE}
+          chmod 755 mega-dfu/megadfu-bootstrap/mergehex
+          cd mega-dfu/megadfu-bootstrap
+          make NRF_SDK_PATH=${GITHUB_WORKSPACE}/nRF5_SDK_11.0.0_89a8197 GITHUB_WORKSPACE=${GITHUB_WORKSPACE}
           cd ${GITHUB_WORKSPACE}
       - name: Dump filesystem to log
         if: always()
         run: |
           pwd > log.txt
-          find . >>log.txt
+          find . -ls >>log.txt
       - name: Publish
         if: always()
         uses: actions/upload-artifact@v4
