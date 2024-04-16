@@ -79,7 +79,7 @@ jobs:
           cd mega-dfu/megadfu-bootstrap
           make NRF_SDK_PATH=${GITHUB_WORKSPACE}/nRF5_SDK_11.0.0_89a8197 GITHUB_WORKSPACE=${GITHUB_WORKSPACE} megadfu-bootstrap
           cd ${GITHUB_WORKSPACE}
-          ${GITHUB_WORKSPACE}/gcc-arm-none-eabi-4_9-2015q1/arm-none-eabi/bin/objcopy -O binary ${GITHUB_WORKSPACE}/mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.out ${GITHUB_WORKSPACE}/mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.bin
+          ${GITHUB_WORKSPACE}/gcc-arm-none-eabi-4_9-2015q1/arm-none-eabi/bin/objcopy -O binary -I ihex ${GITHUB_WORKSPACE}/mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.hex ${GITHUB_WORKSPACE}/mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.bin
       - name: Dump filesystem to log
         if: always()
         run: |
