@@ -1,3 +1,6 @@
 [submodule "mega-dfu"]
 	path = mega-dfu
 	url = git@github.com:richard-sim/mega-dfu.git
+[submodule "pc-nrfutil"]
+	path = pc-nrfutil
+	url = git@github.com:NordicSemiconductor/pc-nrfutil.git
