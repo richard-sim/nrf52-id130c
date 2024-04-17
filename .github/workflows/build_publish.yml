@@ -85,7 +85,11 @@ jobs:
           cd pc-nrfutil
           pip install --requirement requirements.txt
           python setup.py install
-          nrfutil pkg generate --help
+          nrfutil --help
+          nrfutil dfu --help
+          nrfutil dfu genpkg --help
+          nrfutil version
+          nrfutil dfu genpkg --application ${GITHUB_WORKSPACE}/mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.hex ${GITHUB_WORKSPACE}/dfu-11.zip
           cd ${GITHUB_WORKSPACE}
       - name: Dump filesystem to log
         if: always()
@@ -105,6 +109,7 @@ jobs:
             mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap.bin
             mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.hex
             mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.bin
+            dfu-11.zip
           
           
     
