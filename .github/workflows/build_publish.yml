@@ -64,22 +64,22 @@ jobs:
         run: |
           nrfutil/nrfutil pkg generate --hw-version 52 --sd-req 0xB7 --sd-id 0xB7 --key-file dfu_private_key.pem --softdevice nRF5_SDK_17.1.0_ddde560/components/softdevice/s132/hex/s132_nrf52_7.2.0_softdevice.hex --bootloader-version 1 --bootloader nRF5_SDK_17.1.0_ddde560/examples/dfu/secure_bootloader/pca10040_s132_ble/armgcc/_build/nrf52832_xxaa_s132.hex sdk-17-dfu-package-bootloader.zip
           unzip -q sdk-17-dfu-package-bootloader.zip sd_bl.bin
-          mv sd_bl.bin mega-dfu/megadfu/
-          mv nRF5_SDK_17.1.0_ddde560/examples/dfu/secure_bootloader/pca10040_s132_ble/armgcc/_build/bootloader_setting.hex mega-dfu/megadfu/
+          mv sd_bl.bin nrf52-mega-dfu/megadfu/
+          mv nRF5_SDK_17.1.0_ddde560/examples/dfu/secure_bootloader/pca10040_s132_ble/armgcc/_build/bootloader_setting.hex nrf52-mega-dfu/megadfu/
       - name: Build megadfu-finalize, megadfu and megadfu-bootstrap with SDK 11 and SDK17.1 bootloader as payload
         run: |
-          cd mega-dfu/megadfu-finalize
+          cd nrf52-mega-dfu/megadfu-finalize
           make NRF_SDK_PATH=${GITHUB_WORKSPACE}/nRF5_SDK_11.0.0_89a8197 GITHUB_WORKSPACE=${GITHUB_WORKSPACE}
           cd ${GITHUB_WORKSPACE}
-          chmod 755 mega-dfu/megadfu/lz4
-          cd mega-dfu/megadfu
+          chmod 755 nrf52-mega-dfu/megadfu/lz4
+          cd nrf52-mega-dfu/megadfu
           make NRF_SDK_PATH=${GITHUB_WORKSPACE}/nRF5_SDK_11.0.0_89a8197 GITHUB_WORKSPACE=${GITHUB_WORKSPACE}
           cd ${GITHUB_WORKSPACE}
-          chmod 755 mega-dfu/megadfu-bootstrap/mergehex
-          cd mega-dfu/megadfu-bootstrap
+          chmod 755 nrf52-mega-dfu/megadfu-bootstrap/mergehex
+          cd nrf52-mega-dfu/megadfu-bootstrap
           make NRF_SDK_PATH=${GITHUB_WORKSPACE}/nRF5_SDK_11.0.0_89a8197 GITHUB_WORKSPACE=${GITHUB_WORKSPACE} megadfu-bootstrap
           cd ${GITHUB_WORKSPACE}
-          ${GITHUB_WORKSPACE}/gcc-arm-none-eabi-4_9-2015q1/arm-none-eabi/bin/objcopy -O binary -I ihex ${GITHUB_WORKSPACE}/mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.hex ${GITHUB_WORKSPACE}/mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.bin
+          ${GITHUB_WORKSPACE}/gcc-arm-none-eabi-4_9-2015q1/arm-none-eabi/bin/objcopy -O binary -I ihex ${GITHUB_WORKSPACE}/nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.hex ${GITHUB_WORKSPACE}/nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.bin
       - name: Create DFU zip file
         run: |
           cd pc-nrfutil
@@ -89,7 +89,7 @@ jobs:
           nrfutil dfu --help
           nrfutil dfu genpkg --help
           nrfutil version
-          nrfutil dfu genpkg --dev-revision 616 --dev-type 616 --application ${GITHUB_WORKSPACE}/mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.bin ${GITHUB_WORKSPACE}/dfu-11.zip
+          nrfutil dfu genpkg --dev-revision 616 --dev-type 616 --application ${GITHUB_WORKSPACE}/nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.bin ${GITHUB_WORKSPACE}/dfu-11.zip
           cd ${GITHUB_WORKSPACE}
       - name: Dump filesystem to log
         if: always()
@@ -106,9 +106,9 @@ jobs:
             nRF5_SDK_17.1.0_ddde560/components/softdevice/s132/hex/s132_nrf52_7.2.0_softdevice.hex
             nRF5_SDK_17.1.0_ddde560/examples/dfu/secure_bootloader/pca10040_s132_ble/armgcc/_build/nrf52832_xxaa_s132.hex
             nRF5_SDK_17.1.0_ddde560/examples/dfu/secure_bootloader/pca10040_s132_ble/armgcc/_build/nrf52832_xxaa_s132.hex sdk-17-dfu-package-bootloader.zip
-            mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap.bin
-            mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.hex
-            mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.bin
+            nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap.bin
+            nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.hex
+            nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.bin
             dfu-11.zip
           
           
