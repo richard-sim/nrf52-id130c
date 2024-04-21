@@ -10,6 +10,7 @@ on:
 
 jobs:
   run:
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -21,6 +22,11 @@ jobs:
           python-version: '2.7'
       - name: Get timestamp
         run: echo "MY_TIMESTAMP=$(date +%Y-%m-%d-%H-%M)" >> $GITHUB_ENV
+      - name: Tag
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          custom_tag: ${{env.MY_TIMESTAMP}}
       - name: Fetch tools
         run: |
           wget --no-verbose https://launchpad.net/gcc-arm-embedded/4.9/4.9-2015-q1-update/+download/gcc-arm-none-eabi-4_9-2015q1-20150306-linux.tar.bz2
@@ -111,5 +117,8 @@ jobs:
             nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.hex
             nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.bin
             dfu-${{env.MY_TIMESTAMP}}.zip
-          
-    
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{env.MY_TIMESTAMP}}
+          files: dfu-${{env.MY_TIMESTAMP}}.zip
