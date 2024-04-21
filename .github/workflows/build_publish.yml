@@ -25,8 +25,8 @@ jobs:
       run: |
         git config user.name "GitHub Actions"
         git config user.email "github@bronwenandtom.com"
-        git tag tag-${env.MY_TIMESTAMP}
-        git push origin tag-${env.MY_TIMESTAMP}
+        git tag tag-${{env.MY_TIMESTAMP}}
+        git push origin tag-${{env.MY_TIMESTAMP}}
       - name: Fetch tools
         run: |
           wget --no-verbose https://launchpad.net/gcc-arm-embedded/4.9/4.9-2015-q1-update/+download/gcc-arm-none-eabi-4_9-2015q1-20150306-linux.tar.bz2
