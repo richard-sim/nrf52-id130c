@@ -1,4 +1,4 @@
-name: Build and Publish
+name: Build and release megadfu
 
 on:
   push:
@@ -65,7 +65,7 @@ jobs:
         run: |
           cp -f dfu_public_key.c nRF5_SDK_17.1.0_ddde560/examples/dfu/dfu_public_key.c
           cd nRF5_SDK_17.1.0_ddde560/examples/dfu/secure_bootloader/pca10040_s132_ble/armgcc
-          make SDK_ROOT=${GITHUB_WORKSPACE}/nRF5_SDK_17.1.0_ddde560 GITHUB_WORKSPACE=${GITHUB_WORKSPACE}
+          make SDK_ROOT=${GITHUB_WORKSPACE}/nRF5_SDK_17.1.0_ddde560 GITHUB_WORKSPACE=${GITHUB_WORKSPACE} VERBOSE=1
           ${GITHUB_WORKSPACE}/nrfutil/nrfutil settings generate --family NRF52 --application _build/nrf52832_xxaa_s132.hex --application-version 1 --bootloader-version 1 --bl-settings-version 1 _build/bootloader_setting.hex
           cd ${GITHUB_WORKSPACE}
       - name: Sign SDK 17.1 bootloader and extract files to megadfu
@@ -74,18 +74,22 @@ jobs:
           unzip -q sdk-17-dfu-package-bootloader.zip sd_bl.bin
           mv sd_bl.bin nrf52-mega-dfu/megadfu/
           mv nRF5_SDK_17.1.0_ddde560/examples/dfu/secure_bootloader/pca10040_s132_ble/armgcc/_build/bootloader_setting.hex nrf52-mega-dfu/megadfu/
-      - name: Build megadfu-finalize, megadfu and megadfu-bootstrap with SDK 11 and SDK17.1 bootloader as payload
+      - name: Build megadfu-finalize with SDK 11 and SDK17.1 bootloader as payload
         run: |
           cd nrf52-mega-dfu/megadfu-finalize
-          make NRF_SDK_PATH=${GITHUB_WORKSPACE}/nRF5_SDK_11.0.0_89a8197 GITHUB_WORKSPACE=${GITHUB_WORKSPACE}
+          make NRF_SDK_PATH=${GITHUB_WORKSPACE}/nRF5_SDK_11.0.0_89a8197 GITHUB_WORKSPACE=${GITHUB_WORKSPACE} VERBOSE=1
           cd ${GITHUB_WORKSPACE}
+      - name: Build megadfu with SDK 11 and SDK17.1 bootloader as payload
+        run: |
           chmod 755 nrf52-mega-dfu/megadfu/lz4
           cd nrf52-mega-dfu/megadfu
-          make NRF_SDK_PATH=${GITHUB_WORKSPACE}/nRF5_SDK_11.0.0_89a8197 GITHUB_WORKSPACE=${GITHUB_WORKSPACE}
+          make NRF_SDK_PATH=${GITHUB_WORKSPACE}/nRF5_SDK_11.0.0_89a8197 GITHUB_WORKSPACE=${GITHUB_WORKSPACE} VERBOSE=1
           cd ${GITHUB_WORKSPACE}
           chmod 755 nrf52-mega-dfu/megadfu-bootstrap/mergehex
+      - name: Build megadfu-bootstrap with SDK 11 and SDK17.1 bootloader as payload
+        run: |
           cd nrf52-mega-dfu/megadfu-bootstrap
-          make NRF_SDK_PATH=${GITHUB_WORKSPACE}/nRF5_SDK_11.0.0_89a8197 GITHUB_WORKSPACE=${GITHUB_WORKSPACE} megadfu-bootstrap
+          make NRF_SDK_PATH=${GITHUB_WORKSPACE}/nRF5_SDK_11.0.0_89a8197 GITHUB_WORKSPACE=${GITHUB_WORKSPACE} megadfu-bootstrap VERBOSE=1
           cd ${GITHUB_WORKSPACE}
           ${GITHUB_WORKSPACE}/gcc-arm-none-eabi-4_9-2015q1/arm-none-eabi/bin/objcopy -O binary -I ihex ${GITHUB_WORKSPACE}/nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.hex ${GITHUB_WORKSPACE}/nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.bin
       - name: Create DFU zip file
@@ -110,12 +114,15 @@ jobs:
           path: |
             log.txt
             nRF5_SDK_17.1.0_ddde560/components/softdevice/s132/hex/s132_nrf52_7.2.0_softdevice.hex
-            nRF5_SDK_17.1.0_ddde560/examples/dfu/secure_bootloader/pca10040_s132_ble/armgcc/_build/nrf52832_xxaa_s132.hex
-            nRF5_SDK_17.1.0_ddde560/examples/dfu/secure_bootloader/pca10040_s132_ble/armgcc/_build/nrf52832_xxaa_s132.hex
+            nRF5_SDK_17.1.0_ddde560/examples/dfu/secure_bootloader/pca10040_s132_ble/armgcc/_build/nrf52832_xxaa_s132.*
             sdk-17-dfu-package-bootloader.zip
-            nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap.bin
-            nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.hex
-            nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.bin
+            nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap.*
+            nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.*
+            nrf52-mega-dfu/megadfu-bootstrap/_build/obj/
+            nrf52-mega-dfu/megadfu-finalize/_build/megadfu-finalize.*
+            nrf52-mega-dfu/megadfu-finalize/_build/obj/
+            nrf52-mega-dfu/megadfu/_build/megadfu.*
+            nrf52-mega-dfu/megadfu/_build/obj/
             dfu-${{env.MY_TIMESTAMP}}.zip
       - name: Release
         uses: softprops/action-gh-release@v2
