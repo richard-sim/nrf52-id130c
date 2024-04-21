@@ -21,6 +21,12 @@ jobs:
           python-version: '2.7'
       - name: Get timestamp
         run: echo "MY_TIMESTAMP=$(date +%Y-%m-%d-%H-%M)" >> $GITHUB_ENV
+      - name: Tag
+        run: |
+          git config user.name "Github Actions"
+          git config user.email "github_actions@bronwenandtom.com"
+          git tag ${{env.MY_TIMESTAMP}}
+          git push origin ${{env.MY_TIMESTAMP}}
       - name: Fetch tools
         run: |
           wget --no-verbose https://launchpad.net/gcc-arm-embedded/4.9/4.9-2015-q1-update/+download/gcc-arm-none-eabi-4_9-2015q1-20150306-linux.tar.bz2
