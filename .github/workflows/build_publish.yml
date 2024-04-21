@@ -19,6 +19,8 @@ jobs:
       - uses: LizardByte/setup-python-action@master
         with:
           python-version: '2.7'
+      - name: Get timestamp
+        run: echo "MY_TIMESTAMP=$(date +%Y-%m-%d-%H-%M)" >> $GITHUB_ENV
       - name: Fetch tools
         run: |
           wget --no-verbose https://launchpad.net/gcc-arm-embedded/4.9/4.9-2015-q1-update/+download/gcc-arm-none-eabi-4_9-2015q1-20150306-linux.tar.bz2
@@ -89,15 +91,13 @@ jobs:
           nrfutil dfu --help
           nrfutil dfu genpkg --help
           nrfutil version
-          nrfutil dfu genpkg --dev-revision 616 --dev-type 616 --application ${GITHUB_WORKSPACE}/nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.bin ${GITHUB_WORKSPACE}/dfu-11.zip
+          nrfutil dfu genpkg --dev-revision 616 --dev-type 616 --application ${GITHUB_WORKSPACE}/nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.bin ${GITHUB_WORKSPACE}/dfu-${{env.MY_TIMESTAMP}}.zip
           cd ${GITHUB_WORKSPACE}
       - name: Dump filesystem to log
-        if: always()
         run: |
           pwd > log.txt
           find . -ls >>log.txt
       - name: Publish
-        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: results
@@ -110,7 +110,6 @@ jobs:
             nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap.bin
             nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.hex
             nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.bin
-            dfu-11.zip
-          
+            dfu-${{env.MY_TIMESTAMP}}.zip
           
     
