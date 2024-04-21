@@ -111,5 +111,7 @@ jobs:
             nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.hex
             nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.bin
             dfu-${{env.MY_TIMESTAMP}}.zip
-          
-    
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dfu-${{env.MY_TIMESTAMP}}.zip
