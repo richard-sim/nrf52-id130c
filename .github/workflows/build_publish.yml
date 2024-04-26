@@ -65,7 +65,7 @@ jobs:
         run: |
           cp -f dfu_public_key.c nRF5_SDK_17.1.0_ddde560/examples/dfu/dfu_public_key.c
           cd nRF5_SDK_17.1.0_ddde560/examples/dfu/secure_bootloader/pca10040_s132_ble/armgcc
-          make SDK_ROOT=${GITHUB_WORKSPACE}/nRF5_SDK_17.1.0_ddde560 GITHUB_WORKSPACE=${GITHUB_WORKSPACE}
+          make SDK_ROOT=${GITHUB_WORKSPACE}/nRF5_SDK_17.1.0_ddde560 GITHUB_WORKSPACE=${GITHUB_WORKSPACE} VERBOSE=1
           ${GITHUB_WORKSPACE}/nrfutil/nrfutil settings generate --family NRF52 --application _build/nrf52832_xxaa_s132.hex --application-version 1 --bootloader-version 1 --bl-settings-version 1 _build/bootloader_setting.hex
           cd ${GITHUB_WORKSPACE}
       - name: Sign SDK 17.1 bootloader and extract files to megadfu
@@ -77,15 +77,15 @@ jobs:
       - name: Build megadfu-finalize, megadfu and megadfu-bootstrap with SDK 11 and SDK17.1 bootloader as payload
         run: |
           cd nrf52-mega-dfu/megadfu-finalize
-          make NRF_SDK_PATH=${GITHUB_WORKSPACE}/nRF5_SDK_11.0.0_89a8197 GITHUB_WORKSPACE=${GITHUB_WORKSPACE}
+          make NRF_SDK_PATH=${GITHUB_WORKSPACE}/nRF5_SDK_11.0.0_89a8197 GITHUB_WORKSPACE=${GITHUB_WORKSPACE} VERBOSE=1
           cd ${GITHUB_WORKSPACE}
           chmod 755 nrf52-mega-dfu/megadfu/lz4
           cd nrf52-mega-dfu/megadfu
-          make NRF_SDK_PATH=${GITHUB_WORKSPACE}/nRF5_SDK_11.0.0_89a8197 GITHUB_WORKSPACE=${GITHUB_WORKSPACE}
+          make NRF_SDK_PATH=${GITHUB_WORKSPACE}/nRF5_SDK_11.0.0_89a8197 GITHUB_WORKSPACE=${GITHUB_WORKSPACE} VERBOSE=1
           cd ${GITHUB_WORKSPACE}
           chmod 755 nrf52-mega-dfu/megadfu-bootstrap/mergehex
           cd nrf52-mega-dfu/megadfu-bootstrap
-          make NRF_SDK_PATH=${GITHUB_WORKSPACE}/nRF5_SDK_11.0.0_89a8197 GITHUB_WORKSPACE=${GITHUB_WORKSPACE} megadfu-bootstrap
+          make NRF_SDK_PATH=${GITHUB_WORKSPACE}/nRF5_SDK_11.0.0_89a8197 GITHUB_WORKSPACE=${GITHUB_WORKSPACE} megadfu-bootstrap VERBOSE=1
           cd ${GITHUB_WORKSPACE}
           ${GITHUB_WORKSPACE}/gcc-arm-none-eabi-4_9-2015q1/arm-none-eabi/bin/objcopy -O binary -I ihex ${GITHUB_WORKSPACE}/nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.hex ${GITHUB_WORKSPACE}/nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.bin
       - name: Create DFU zip file
