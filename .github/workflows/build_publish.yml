@@ -127,6 +127,7 @@ jobs:
             nrf52-mega-dfu/megadfu/_build/megadfu.bin
             nrf52-mega-dfu/megadfu/_build/megadfu.out
             nrf52-mega-dfu/megadfu/_build/megadfu.hex
+            nrf52-mega-dfu/megadfu/_build/obj/*.o
             dfu-${{env.MY_TIMESTAMP}}.zip
       - name: Release
         uses: softprops/action-gh-release@v2
