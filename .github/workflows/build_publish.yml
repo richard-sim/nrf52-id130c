@@ -114,23 +114,14 @@ jobs:
           path: |
             log.txt
             nRF5_SDK_17.1.0_ddde560/components/softdevice/s132/hex/s132_nrf52_7.2.0_softdevice.hex
-            nRF5_SDK_17.1.0_ddde560/examples/dfu/secure_bootloader/pca10040_s132_ble/armgcc/_build/nrf52832_xxaa_s132.hex
-            nRF5_SDK_17.1.0_ddde560/examples/dfu/secure_bootloader/pca10040_s132_ble/armgcc/_build/nrf52832_xxaa_s132.hex
+            nRF5_SDK_17.1.0_ddde560/examples/dfu/secure_bootloader/pca10040_s132_ble/armgcc/_build/nrf52832_xxaa_s132.*
             sdk-17-dfu-package-bootloader.zip
-            nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap.map
-            nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap.bin
-            nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap.out
-            nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap.hex
-            nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.hex
-            nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.bin
-            nrf52-mega-dfu/megadfu-finalize/_build/megadfu-finalize.map
-            nrf52-mega-dfu/megadfu-finalize/_build/megadfu-finalize.bin
-            nrf52-mega-dfu/megadfu-finalize/_build/megadfu-finalize.out
-            nrf52-mega-dfu/megadfu-finalize/_build/megadfu-finalize.hex
-            nrf52-mega-dfu/megadfu/_build/megadfu.map
-            nrf52-mega-dfu/megadfu/_build/megadfu.bin
-            nrf52-mega-dfu/megadfu/_build/megadfu.out
-            nrf52-mega-dfu/megadfu/_build/megadfu.hex
+            nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap.*
+            nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.*
+            nrf52-mega-dfu/megadfu-bootstrap/_build/obj/*.o
+            nrf52-mega-dfu/megadfu-finalize/_build/megadfu-finalize.*
+            nrf52-mega-dfu/megadfu-finalize/_build/obj/*.o
+            nrf52-mega-dfu/megadfu/_build/megadfu.*
             nrf52-mega-dfu/megadfu/_build/obj/*.o
             dfu-${{env.MY_TIMESTAMP}}.zip
       - name: Release
