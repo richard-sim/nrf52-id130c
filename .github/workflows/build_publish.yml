@@ -118,11 +118,11 @@ jobs:
             sdk-17-dfu-package-bootloader.zip
             nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap.*
             nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.*
-            nrf52-mega-dfu/megadfu-bootstrap/_build/obj/*.o
+            nrf52-mega-dfu/megadfu-bootstrap/_build/obj/
             nrf52-mega-dfu/megadfu-finalize/_build/megadfu-finalize.*
-            nrf52-mega-dfu/megadfu-finalize/_build/obj/*.o
+            nrf52-mega-dfu/megadfu-finalize/_build/obj/
             nrf52-mega-dfu/megadfu/_build/megadfu.*
-            nrf52-mega-dfu/megadfu/_build/obj/*.o
+            nrf52-mega-dfu/megadfu/_build/obj/
             dfu-${{env.MY_TIMESTAMP}}.zip
       - name: Release
         uses: softprops/action-gh-release@v2
