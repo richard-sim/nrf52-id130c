@@ -1,10 +1,14 @@
-name: Build and release megadfu
+name: Build and release megadfu upgrader
 
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - upgrader/**
   pull_request:
     branches: [ "main" ]
+    paths:
+      - upgrader/**
 
   workflow_dispatch:
 
