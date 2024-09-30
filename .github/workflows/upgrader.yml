@@ -45,7 +45,7 @@ jobs:
           rm -f nrf5sdk110089a8197.zip
           cp -f Makefile.posix.17.1 nRF5_SDK_17.1.0_ddde560/components/toolchain/gcc/Makefile.posix
           cp -f Makefile.posix.11.0 nRF5_SDK_11.0.0_89a8197/components/toolchain/gcc/Makefile.posix
-          cp -f sdk_config.h nRF5_SDK_17.1.0_ddde560/examples/dfu/secure_bootloader/pca10040_s132_ble/config/
+          cp -f upgrader/sdk_config.h nRF5_SDK_17.1.0_ddde560/examples/dfu/secure_bootloader/pca10040_s132_ble/config/
       - name: Patch SDK 17.1 with uECC
         run: |
           cd nRF5_SDK_17.1.0_ddde560/external/micro-ecc
@@ -72,26 +72,26 @@ jobs:
         run: |
           nrfutil/nrfutil pkg generate --hw-version 52 --sd-req 0xB7 --sd-id 0xB7 --key-file dfu_private_key.pem --softdevice nRF5_SDK_17.1.0_ddde560/components/softdevice/s132/hex/s132_nrf52_7.2.0_softdevice.hex --bootloader-version 1 --bootloader nRF5_SDK_17.1.0_ddde560/examples/dfu/secure_bootloader/pca10040_s132_ble/armgcc/_build/nrf52832_xxaa_s132.hex sdk-17-dfu-package-bootloader.zip
           unzip -q sdk-17-dfu-package-bootloader.zip sd_bl.bin
-          mv sd_bl.bin nrf52-mega-dfu/megadfu/
-          mv nRF5_SDK_17.1.0_ddde560/examples/dfu/secure_bootloader/pca10040_s132_ble/armgcc/_build/bootloader_setting.hex nrf52-mega-dfu/megadfu/
+          mv sd_bl.bin upgrader/nrf52-mega-dfu/megadfu/
+          mv nRF5_SDK_17.1.0_ddde560/examples/dfu/secure_bootloader/pca10040_s132_ble/armgcc/_build/bootloader_setting.hex upgrader/nrf52-mega-dfu/megadfu/
       - name: Build megadfu-finalize with SDK 11 and SDK17.1 bootloader as payload
         run: |
-          cd nrf52-mega-dfu/megadfu-finalize
+          cd upgrader/nrf52-mega-dfu/megadfu-finalize
           make NRF_SDK_PATH=${GITHUB_WORKSPACE}/nRF5_SDK_11.0.0_89a8197 GITHUB_WORKSPACE=${GITHUB_WORKSPACE} VERBOSE=1
           cd ${GITHUB_WORKSPACE}
       - name: Build megadfu with SDK 11 and SDK17.1 bootloader as payload
         run: |
-          chmod 755 nrf52-mega-dfu/megadfu/lz4
-          cd nrf52-mega-dfu/megadfu
+          chmod 755 upgrader/nrf52-mega-dfu/megadfu/lz4
+          cd upgrader/nrf52-mega-dfu/megadfu
           make NRF_SDK_PATH=${GITHUB_WORKSPACE}/nRF5_SDK_11.0.0_89a8197 GITHUB_WORKSPACE=${GITHUB_WORKSPACE} VERBOSE=1
           cd ${GITHUB_WORKSPACE}
-          chmod 755 nrf52-mega-dfu/megadfu-bootstrap/mergehex
+          chmod 755 upgrader/nrf52-mega-dfu/megadfu-bootstrap/mergehex
       - name: Build megadfu-bootstrap with SDK 11 and SDK17.1 bootloader as payload
         run: |
-          cd nrf52-mega-dfu/megadfu-bootstrap
+          cd upgrader/nrf52-mega-dfu/megadfu-bootstrap
           make NRF_SDK_PATH=${GITHUB_WORKSPACE}/nRF5_SDK_11.0.0_89a8197 GITHUB_WORKSPACE=${GITHUB_WORKSPACE} megadfu-bootstrap VERBOSE=1
           cd ${GITHUB_WORKSPACE}
-          ${GITHUB_WORKSPACE}/gcc-arm-none-eabi-4_9-2015q1/arm-none-eabi/bin/objcopy -O binary -I ihex ${GITHUB_WORKSPACE}/nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.hex ${GITHUB_WORKSPACE}/nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.bin
+          ${GITHUB_WORKSPACE}/gcc-arm-none-eabi-4_9-2015q1/arm-none-eabi/bin/objcopy -O binary -I ihex ${GITHUB_WORKSPACE}/upgrader/nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.hex ${GITHUB_WORKSPACE}/upgrader/nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.bin
       - name: Create DFU zip file
         run: |
           cd pc-nrfutil
@@ -101,7 +101,7 @@ jobs:
           nrfutil dfu --help
           nrfutil dfu genpkg --help
           nrfutil version
-          nrfutil dfu genpkg --dev-revision 616 --dev-type 616 --application ${GITHUB_WORKSPACE}/nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.bin ${GITHUB_WORKSPACE}/dfu-${{env.MY_TIMESTAMP}}.zip
+          nrfutil dfu genpkg --dev-revision 616 --dev-type 616 --application ${GITHUB_WORKSPACE}/upgrader/nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.bin ${GITHUB_WORKSPACE}/dfu-${{env.MY_TIMESTAMP}}.zip
           cd ${GITHUB_WORKSPACE}
       - name: Dump filesystem to log
         run: |
@@ -116,13 +116,13 @@ jobs:
             nRF5_SDK_17.1.0_ddde560/components/softdevice/s132/hex/s132_nrf52_7.2.0_softdevice.hex
             nRF5_SDK_17.1.0_ddde560/examples/dfu/secure_bootloader/pca10040_s132_ble/armgcc/_build/nrf52832_xxaa_s132.*
             sdk-17-dfu-package-bootloader.zip
-            nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap.*
-            nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.*
-            nrf52-mega-dfu/megadfu-bootstrap/_build/obj/
-            nrf52-mega-dfu/megadfu-finalize/_build/megadfu-finalize.*
-            nrf52-mega-dfu/megadfu-finalize/_build/obj/
-            nrf52-mega-dfu/megadfu/_build/megadfu.*
-            nrf52-mega-dfu/megadfu/_build/obj/
+            upgrader/nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap.*
+            upgrader/nrf52-mega-dfu/megadfu-bootstrap/_build/megadfu-bootstrap-package.*
+            upgrader/nrf52-mega-dfu/megadfu-bootstrap/_build/obj/
+            upgrader/nrf52-mega-dfu/megadfu-finalize/_build/megadfu-finalize.*
+            upgrader/nrf52-mega-dfu/megadfu-finalize/_build/obj/
+            upgrader/nrf52-mega-dfu/megadfu/_build/megadfu.*
+            upgrader/nrf52-mega-dfu/megadfu/_build/obj/
             dfu-${{env.MY_TIMESTAMP}}.zip
       - name: Release
         uses: softprops/action-gh-release@v2
